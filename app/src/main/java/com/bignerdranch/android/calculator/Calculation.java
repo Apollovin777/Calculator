@@ -5,10 +5,10 @@ import java.util.LinkedList;
 
 public class Calculation {
     private OPERATION operation;
-    private LinkedList<String> list;
+    private String[] list;
 
     public Calculation() {
-        list = new LinkedList<>();
+        list = new String[2];
     }
 
     public enum OPERATION{
@@ -16,11 +16,11 @@ public class Calculation {
     }
 
     public void addOperand(String value){
-        list.add(value);
-    }
-
-    public OPERATION getOperation() {
-        return operation;
+        if(list[0]==null){
+            list[0]=value;
+        } else {
+            list[1] = value;
+        }
     }
 
     public void setOperation(OPERATION operation) {
@@ -36,15 +36,20 @@ public class Calculation {
     }
 
     public String getResult(){
-        if (list.size()==0 || operation == null)
+        if (list[0]==null)
             return "0";
 
-        if (list.size()==1 || list.get(1)=="") {
-            return list.get(0);
+        if (operation == null) {
+            return list[0];
         }
 
-        Double first = Double.parseDouble(list.get(0));
-        Double second = Double.parseDouble(list.get(1));
+        if (operation != null && list[1]==null){
+            list[1] = list[0];
+            return this.getResult();
+        }
+
+        Double first = Double.parseDouble(list[0]);
+        Double second = Double.parseDouble(list[1]);
 
         Double result=0d;
         switch (operation){
@@ -61,12 +66,12 @@ public class Calculation {
                 result = first / second;
                 break;
         }
-        list = new LinkedList<>();
-
+        list[0]=String.valueOf(result);
+        list[1]=null;
         return String.valueOf(result);
     }
 
-    
+
 
 
 }

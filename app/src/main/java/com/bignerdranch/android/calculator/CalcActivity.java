@@ -29,6 +29,8 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     private Button mButtonMultiply;
     private Button mButtonDivide;
     private Button mButtonEqual;
+    private Button mButtonClear;
+    private String mText;
 
 
     @Override
@@ -81,11 +83,15 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         mButtonEqual = findViewById(R.id.button_equal);
         mButtonEqual.setOnClickListener(this);
 
+        mButtonClear = findViewById(R.id.button_clear);
+        mButtonClear.setOnClickListener(this);
+
         mCalc = new Calculation();
     }
 
     @Override
     public void onClick(View v) {
+        String temp;
         switch (v.getId()){
             case R.id.button_0:
                 operand = operand + "0";
@@ -131,24 +137,52 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
                 mCalc.addOperand(operand);
                 mCalc.setOperation(Calculation.OPERATION.PLUS);
                 Log.i(TAG,"button_plus pressed");
+                temp = (String) mTextView.getText();
+                if (temp.endsWith("+")||temp.endsWith("-")||
+                        temp.endsWith("*")||temp.endsWith("/")){
+
+                    temp = temp.substring(0,temp.length()-2);
+                    mTextView.setText(temp);
+                }
                 mTextView.setText(mTextView.getText() + " " + "+");
                 operand = "";
                 break;
             case R.id.button_minus:
                 mCalc.addOperand(operand);
                 mCalc.setOperation(Calculation.OPERATION.MINUS);
+                temp = (String) mTextView.getText();
+                if (temp.endsWith("+")||temp.endsWith("-")||
+                        temp.endsWith("*")||temp.endsWith("/")){
+
+                    temp = temp.substring(0,temp.length()-2);
+                    mTextView.setText(temp);
+                }
                 mTextView.setText(mTextView.getText() + " " + "-");
                 operand = "";
                 break;
             case R.id.button_mult:
                 mCalc.addOperand(operand);
                 mCalc.setOperation(Calculation.OPERATION.MULTIPLY);
+                temp = (String) mTextView.getText();
+                if (temp.endsWith("+")||temp.endsWith("-")||
+                        temp.endsWith("*")||temp.endsWith("/")){
+
+                    temp = temp.substring(0,temp.length()-2);
+                    mTextView.setText(temp);
+                }
                 mTextView.setText(mTextView.getText() + " " + "*");
                 operand = "";
                 break;
             case R.id.button_div:
                 mCalc.addOperand(operand);
                 mCalc.setOperation(Calculation.OPERATION.DIVIDE);
+                temp = (String) mTextView.getText();
+                if (temp.endsWith("+")||temp.endsWith("-")||
+                        temp.endsWith("*")||temp.endsWith("/")){
+
+                    temp = temp.substring(0,temp.length()-2);
+                    mTextView.setText(temp);
+                }
                 mTextView.setText(mTextView.getText() + " " + "/");
                 operand = "";
                 break;
@@ -156,7 +190,12 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
                 mCalc.addOperand(operand);
                 String result = mCalc.getResult();
                 mTextView.setText(result);
-                operand = result;
+                operand = "";
+                break;
+            case R.id.button_clear:
+                mCalc = new Calculation();
+                operand = "";
+                mTextView.setText("0");
                 break;
         }
     }
