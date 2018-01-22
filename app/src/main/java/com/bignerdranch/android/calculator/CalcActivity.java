@@ -30,6 +30,7 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     private Button mButtonDivide;
     private Button mButtonEqual;
     private Button mButtonClear;
+    private Button mButtonSign;
     private String mText;
 
 
@@ -86,6 +87,9 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         mButtonClear = findViewById(R.id.button_clear);
         mButtonClear.setOnClickListener(this);
 
+        mButtonSign = findViewById(R.id.button_sign);
+        mButtonSign.setOnClickListener(this);
+
         mCalc = new Calculation(this);
     }
 
@@ -138,6 +142,9 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_equal:
                 mCalc.addData("=");
                 break;
+            case R.id.button_sign:
+                mCalc.addData("_");
+                break;
             case R.id.button_clear:
                 mCalc = new Calculation(this);
                 operand = "";
@@ -148,6 +155,6 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void updateView(String value) {
-        mTextView.setText(value);
+        mTextView.setText(value.replace("_","-"));
     }
 }
