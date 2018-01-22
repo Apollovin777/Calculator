@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class CalcActivity extends AppCompatActivity implements View.OnClickListener{
+public class CalcActivity extends AppCompatActivity implements View.OnClickListener,Calculation.CalculateListener{
     private static String TAG = "CalcActivity";
     private Calculation mCalc;
     private String operand = "";
@@ -86,7 +86,7 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         mButtonClear = findViewById(R.id.button_clear);
         mButtonClear.setOnClickListener(this);
 
-        mCalc = new Calculation();
+        mCalc = new Calculation(this);
     }
 
     @Override
@@ -94,109 +94,60 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         String temp;
         switch (v.getId()){
             case R.id.button_0:
-                operand = operand + "0";
-                mTextView.setText(operand);
+                mCalc.addData("0");
                 break;
             case R.id.button_1:
-                operand = operand + "1";
-                mTextView.setText(operand);
+                mCalc.addData("1");
                 break;
             case R.id.button_2:
-                operand = operand + "2";
-                mTextView.setText(operand);
+                mCalc.addData("2");
                 break;
             case R.id.button_3:
-                operand = operand + "3";
-                mTextView.setText(operand);
+                mCalc.addData("3");
                 break;
             case R.id.button_4:
-                operand = operand + "4";
-                mTextView.setText(operand);
+                mCalc.addData("4");
                 break;
             case R.id.button_5:
-                operand = operand + "5";
-                mTextView.setText(operand);
+                mCalc.addData("5");
                 break;
             case R.id.button_6:
-                operand = operand + "6";
-                mTextView.setText(operand);
+                mCalc.addData("6");
                 break;
             case R.id.button_7:
-                operand = operand + "7";
-                mTextView.setText(operand);
+                mCalc.addData("7");
                 break;
             case R.id.button_8:
-                operand = operand + "8";
-                mTextView.setText(operand);
+                mCalc.addData("8");
                 break;
             case R.id.button_9:
-                operand = operand + "9";
-                mTextView.setText(operand);
+                mCalc.addData("9");
                 break;
             case R.id.button_plus:
-                mCalc.addOperand(operand);
-                mCalc.setOperation(Calculation.OPERATION.PLUS);
-                Log.i(TAG,"button_plus pressed");
-                temp = (String) mTextView.getText();
-                if (temp.endsWith("+")||temp.endsWith("-")||
-                        temp.endsWith("*")||temp.endsWith("/")){
-
-                    temp = temp.substring(0,temp.length()-2);
-                    mTextView.setText(temp);
-                }
-                mTextView.setText(mTextView.getText() + " " + "+");
-                operand = "";
+                mCalc.addData("+");
                 break;
             case R.id.button_minus:
-                mCalc.addOperand(operand);
-                mCalc.setOperation(Calculation.OPERATION.MINUS);
-                temp = (String) mTextView.getText();
-                if (temp.endsWith("+")||temp.endsWith("-")||
-                        temp.endsWith("*")||temp.endsWith("/")){
-
-                    temp = temp.substring(0,temp.length()-2);
-                    mTextView.setText(temp);
-                }
-                mTextView.setText(mTextView.getText() + " " + "-");
-                operand = "";
+                mCalc.addData("-");
                 break;
             case R.id.button_mult:
-                mCalc.addOperand(operand);
-                mCalc.setOperation(Calculation.OPERATION.MULTIPLY);
-                temp = (String) mTextView.getText();
-                if (temp.endsWith("+")||temp.endsWith("-")||
-                        temp.endsWith("*")||temp.endsWith("/")){
-
-                    temp = temp.substring(0,temp.length()-2);
-                    mTextView.setText(temp);
-                }
-                mTextView.setText(mTextView.getText() + " " + "*");
-                operand = "";
+                mCalc.addData("*");
                 break;
             case R.id.button_div:
-                mCalc.addOperand(operand);
-                mCalc.setOperation(Calculation.OPERATION.DIVIDE);
-                temp = (String) mTextView.getText();
-                if (temp.endsWith("+")||temp.endsWith("-")||
-                        temp.endsWith("*")||temp.endsWith("/")){
-
-                    temp = temp.substring(0,temp.length()-2);
-                    mTextView.setText(temp);
-                }
-                mTextView.setText(mTextView.getText() + " " + "/");
-                operand = "";
+                mCalc.addData("/");
                 break;
             case R.id.button_equal:
-                mCalc.addOperand(operand);
-                String result = mCalc.getResult();
-                mTextView.setText(result);
-                operand = "";
+                mCalc.addData("=");
                 break;
             case R.id.button_clear:
-                mCalc = new Calculation();
+                mCalc = new Calculation(this);
                 operand = "";
                 mTextView.setText("0");
                 break;
         }
+    }
+
+    @Override
+    public void updateView(String value) {
+        mTextView.setText(value);
     }
 }

@@ -1,74 +1,141 @@
 package com.bignerdranch.android.calculator;
 
-
-import java.util.LinkedList;
+import android.location.Location;
+import android.util.Log;
 
 public class Calculation {
-    private OPERATION operation;
-    private String[] list;
+    private static final String TAG = "Calculation";
 
-    public Calculation() {
-        list = new String[2];
+    private OPERATION operation;
+    private StringBuffer mBuffer;
+    private Double operand_1;
+    private Double operand_2;
+    private CalculateListener mListener;
+    private boolean mContainOperand;
+
+
+    public Calculation(CalculateListener listener) {
+        mBuffer = new StringBuffer();
+        this.mListener = listener;
+
+    }
+
+    public interface CalculateListener{
+        void updateView(String value);
     }
 
     public enum OPERATION{
         PLUS, MINUS, MULTIPLY, DIVIDE
     }
 
-    public void addOperand(String value){
-        if(list[0]==null){
-            list[0]=value;
+    public void addData(String s){
+        if(mContainOperand && s.matches("[0-9]")){
+            mBuffer = new StringBuffer();
+            mContainOperand = false;
+        }
+        else {
+            mContainOperand = false;
+        }
+        switch (s) {
+                case "+":
+                    if (checkSecondOperation()) {
+                        returnResult();
+                    }
+                    if (operation == null) {
+                        mBuffer.append(" " + s + " ");
+                    }
+                    operation = OPERATION.PLUS;
+                    mListener.updateView(mBuffer.toString());
+                    break;
+                case "-":
+                    if (checkSecondOperation()) {
+                        returnResult();
+                    }
+                    if (operation == null) {
+                        mBuffer.append(" " + s + " ");
+                    }
+                    operation = OPERATION.MINUS;
+                    mListener.updateView(mBuffer.toString());
+                    break;
+                case "*":
+                    if (checkSecondOperation()) {
+                        returnResult();
+                    }
+                    if (operation == null) {
+                        mBuffer.append(" " + s + " ");
+                    }
+                    operation = OPERATION.MULTIPLY;
+                    mListener.updateView(mBuffer.toString());
+                    break;
+                case "/":
+                    if (checkSecondOperation()) {
+                        returnResult();
+                    }
+                    if (operation == null) {
+                        mBuffer.append(" " + s + " ");
+                    }
+                    operation = OPERATION.DIVIDE;
+                    mListener.updateView(mBuffer.toString());
+                    break;
+                case "=":
+                    returnResult();
+                    break;
+                default:
+                    mBuffer.append(s);
+                    mListener.updateView(mBuffer.toString());
+            }
+
+    }
+
+    private void parseOperator(){
+        if (operand_1 == null){
+            operand_1 = Double.parseDouble(mBuffer.toString());
         } else {
-            list[1] = value;
+            operand_2 = Double.parseDouble(mBuffer.toString());
         }
     }
 
-    public void setOperation(OPERATION operation) {
-        this.operation = operation;
-    }
+    public void returnResult(){
+        String[] operandArray = mBuffer.toString().split(" ");
 
-    private int parceInt(String value){
-        return 0;
-    }
-
-    private float parceFloat(String value){
-        return 0f;
-    }
-
-    public String getResult(){
-        if (list[0]==null)
-            return "0";
-
-        if (operation == null) {
-            return list[0];
+        if (operandArray.length == 1){
+            mListener.updateView(operandArray[0].toString());
+            mBuffer = new StringBuffer();
+            return;
         }
 
-        if (operation != null && list[1]==null){
-            list[1] = list[0];
-            return this.getResult();
-        }
+        operand_1 = Double.parseDouble(operandArray[0]);
+        operand_2 = Double.parseDouble(operandArray[1]);
+        Double result = calculate();
+        //operand_1 = result;
+        mListener.updateView(mBuffer.toString() + " = " + result.toString());
+        mBuffer = new StringBuffer(result.toString());
+        mContainOperand = true;
+        operation = null;
 
-        Double first = Double.parseDouble(list[0]);
-        Double second = Double.parseDouble(list[1]);
 
-        Double result=0d;
+    }
+
+    private Double calculate() {
         switch (operation){
             case PLUS:
-                result = first + second;
-                break;
+                return operand_1 + operand_2;
             case MINUS:
-                result = first - second;
-                break;
+                return operand_1 - operand_2;
             case MULTIPLY:
-                result = first * second;
-                break;
+                return  operand_1 * operand_2;
             case DIVIDE:
-                result = first / second;
-                break;
+                return  operand_1 / operand_2;
         }
-        list[0]=String.valueOf(result);
-        list[1]=null;
-        return String.valueOf(result);
+        return null;
+    }
+
+    private boolean checkSecondOperation(){
+        return mBuffer.toString().contains("+")||
+                mBuffer.toString().contains("-")||
+                mBuffer.toString().contains("*")||
+                mBuffer.toString().contains("/");
+
     }
 
 
