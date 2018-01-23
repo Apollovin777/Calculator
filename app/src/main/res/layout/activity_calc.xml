@@ -14,7 +14,9 @@
         android:layout_weight="50"
         android:gravity="bottom|right"
         android:text="0"
-        android:textSize="36sp"/>
+        android:textSize="36sp"
+        android:scrollbars = "vertical"
+         />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -185,10 +187,19 @@
                 android:text="=" />
 
             <Button
+                android:id="@+id/button_back"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/button_bakSpace"
+                android:textSize="24sp"
+                android:verticalScrollbarPosition="right" />
+
+            <Button
                 android:id="@+id/button_clear"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:text="C" />
         </LinearLayout>
     </LinearLayout>

@@ -1,12 +1,20 @@
 package com.bignerdranch.android.calculator;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
+import android.text.Spannable;
+import android.text.method.MovementMethod;
+import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class CalcActivity extends AppCompatActivity implements View.OnClickListener,Calculation.CalculateListener{
@@ -31,6 +39,8 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     private Button mButtonEqual;
     private Button mButtonClear;
     private Button mButtonSign;
+    private Button mButtonDot;
+    private Button mButtonBack;
     private String mText;
 
 
@@ -39,6 +49,11 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calc);
         mTextView = findViewById(R.id.text_result);
+        mTextView.setMovementMethod(new ScrollingMovementMethod(){
+
+        });
+
+
         mButton0 = findViewById(R.id.button_0);
         mButton0.setOnClickListener(this);
 
@@ -89,6 +104,14 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
 
         mButtonSign = findViewById(R.id.button_sign);
         mButtonSign.setOnClickListener(this);
+
+        mButtonDot = findViewById(R.id.button_dot);
+        mButtonDot.setOnClickListener(this);
+
+        mButtonBack = findViewById(R.id.button_back);
+        mButtonBack.setOnClickListener(this);
+        Typeface font = Typeface.createFromAsset(getAssets(), "Quivira.otf");
+        mButtonBack.setTypeface(font);
 
         mCalc = new Calculation(this);
     }
@@ -145,16 +168,37 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_sign:
                 mCalc.addData("_");
                 break;
+            case R.id.button_dot:
+                mCalc.addData(".");
+                break;
+            case R.id.button_back:
+                mCalc.addData("d");
+                break;
             case R.id.button_clear:
-                mCalc = new Calculation(this);
-                operand = "";
-                mTextView.setText("0");
+                mCalc.addData("c");
                 break;
         }
     }
 
     @Override
     public void updateView(String value) {
-        mTextView.setText(value.replace("_","-"));
+
+        String text = value.replace("_","-");
+
+        if(mTextView != null){
+            mTextView.setText(text);
+            final Layout layout = mTextView.getLayout();
+            if(layout != null){
+                int scrollDelta = layout.getLineBottom(mTextView.getLineCount() - 1)
+                        - mTextView.getScrollY() - mTextView.getHeight();
+                if(scrollDelta > 0)
+                    mTextView.scrollBy(0, scrollDelta);
+            }
+        }
+    }
+
+    private void appendTextAndScroll(String text)
+    {
+
     }
 }

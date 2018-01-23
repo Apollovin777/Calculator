@@ -6,18 +6,21 @@ import android.util.Log;
 public class Calculation {
     private static final String TAG = "Calculation";
 
-    private OPERATION operation;
+    private OPERATION mOperation;
     private StringBuffer mBuffer;
+    private StringBuffer mOutput;
     private Double operand_1;
     private Double operand_2;
     private CalculateListener mListener;
     private boolean mContainOperand;
+    private boolean mClear;
 
 
     public Calculation(CalculateListener listener) {
         mBuffer = new StringBuffer();
+        mOutput = new StringBuffer();
         this.mListener = listener;
-
+        mClear = false;
     }
 
     public interface CalculateListener {
@@ -28,8 +31,9 @@ public class Calculation {
         PLUS, MINUS, MULTIPLY, DIVIDE
     }
 
+
     public void addData(String s) {
-        if (mContainOperand && s.matches("[0-9]")) {
+        if (mContainOperand && s.matches("[0-9.]")&& !checkSecondOperation()) {
             mBuffer = new StringBuffer();
             mContainOperand = false;
         } else {
@@ -37,59 +41,80 @@ public class Calculation {
         }
         switch (s) {
             case "+":
-                if (checkSecondOperation()) {
-                    returnResult();
-                }
-                if (operation == null) {
-                    mBuffer.append(s);
-                }
-                operation = OPERATION.PLUS;
-                mListener.updateView(mBuffer.toString());
+                performOperations("+");
+                mOperation = OPERATION.PLUS;
                 break;
             case "-":
-                if (checkSecondOperation()) {
-                    returnResult();
-                }
-                if (operation == null) {
-                    mBuffer.append(s);
-                }
-                operation = OPERATION.MINUS;
-                mListener.updateView(mBuffer.toString());
+                performOperations("-");
+                mOperation = OPERATION.MINUS;
                 break;
             case "*":
-                if (checkSecondOperation()) {
-                    returnResult();
-                }
-                if (operation == null) {
-                    mBuffer.append(s);
-                }
-                operation = OPERATION.MULTIPLY;
-                mListener.updateView(mBuffer.toString());
+                performOperations("*");
+                mOperation = OPERATION.MULTIPLY;
                 break;
             case "/":
-                if (checkSecondOperation()) {
-                    returnResult();
-                }
-                if (operation == null) {
-                    mBuffer.append(s);
-                }
-                operation = OPERATION.DIVIDE;
-                mListener.updateView(mBuffer.toString());
+                performOperations("/");
+                mOperation = OPERATION.DIVIDE;
                 break;
             case "_":
-                getLastOperIdex();
+                getLastOperIndex();
+                break;
+            case "d":
+                String character = String.valueOf(mBuffer.charAt(mBuffer.length()-1));
+                if (character.matches("[+\\-*\\/]")){
+                    mOperation = null;
+                }
+                mBuffer.deleteCharAt(mBuffer.length()-1);
+                sendOutput(mBuffer.toString());
                 break;
             case "=":
                 returnResult();
                 break;
+            case ".":
+                if(!mBuffer.toString().matches(".*[0-9]$")) {
+                    mBuffer.append("0");
+                }
+                mBuffer.append(".");
+                sendOutput(mBuffer.toString());
+                break;
+            case "c":
+                if (mClear){
+                    mBuffer = new StringBuffer();
+                    mOutput = new StringBuffer();
+                    mOperation = null;
+                    mClear = false;
+                    sendOutput("0");
+                } else{
+                    mClear = true;
+                    mBuffer = new StringBuffer();
+                    mOperation = null;
+                    sendOutput("0");
+                }
+                break;
             default:
                 mBuffer.append(s);
-                mListener.updateView(mBuffer.toString());
+                sendOutput(mBuffer.toString());
+                mClear = false;
         }
 
     }
+    private void performOperations(String s){
+        if (checkSecondOperation()) {
+            returnResult();
+        }
+        if (mOperation == null) {
+            mBuffer.append(s);
+        } else{
+            mBuffer.replace(mBuffer.length()-1,mBuffer.length(),s);
+        }
+        sendOutput(mBuffer.toString());
+    }
 
-    private void getLastOperIdex(){
+    private void sendOutput(String val){
+        mListener.updateView(mOutput.toString() + val);
+    }
+
+    private void getLastOperIndex(){
         int index = mBuffer.lastIndexOf("-");
         if (mBuffer.lastIndexOf("+")>index)
             index = mBuffer.lastIndexOf("+");
@@ -99,27 +124,19 @@ public class Calculation {
             index = mBuffer.lastIndexOf("/");
         if(index==-1) {
             mBuffer.insert(0,"_");
-            mListener.updateView(mBuffer.toString());
+            sendOutput(mBuffer.toString());
             return;
         }
         mBuffer.insert(index+1,"_");
-        mListener.updateView(mBuffer.toString().replace("_","-"));
-
+        sendOutput(mBuffer.toString().replace("_","-"));
     }
 
-    private void parseOperator() {
-        if (operand_1 == null) {
-            operand_1 = Double.parseDouble(mBuffer.toString());
-        } else {
-            operand_2 = Double.parseDouble(mBuffer.toString());
-        }
-    }
+     public void returnResult() {
 
-    public void returnResult() {
         String[] operandArray = mBuffer.toString().split("[+\\-*\\/]");
 
         if (operandArray.length == 1) {
-            mListener.updateView(operandArray[0].toString());
+            sendOutput(operandArray[0].toString());
             mBuffer = new StringBuffer();
             return;
         }
@@ -128,20 +145,29 @@ public class Calculation {
             operandArray[i] = operandArray[i].replace("_","-");
         }
 
-        operand_1 = Double.parseDouble(operandArray[0]);
-        operand_2 = Double.parseDouble(operandArray[1]);
-        Double result = calculate();
+        Double operand_1 = Double.parseDouble(operandArray[0]);
+        Double operand_2 = Double.parseDouble(operandArray[1]);
+        Double result = calculate(operand_1, operand_2);
+        result = Calculation.round(result,8);
+        String strResult;
+        if ((result == Math.floor(result)) && !Double.isInfinite(result)) {
+            strResult = result.toString().substring(0,result.toString().length()-2);
+        } else {
+            strResult = result.toString();
+        }
+
+
         //operand_1 = result;
-        mListener.updateView(mBuffer.toString() + " = " + result.toString());
-        mBuffer = new StringBuffer(result.toString().replace("-","_"));
+        //mListener.updateView(mBuffer.toString() + "=" + strResult + "\n");
+        mOutput.append(mBuffer.toString() + "=" + strResult + "\n");
+        sendOutput(strResult);
+        mBuffer = new StringBuffer(strResult.replace("-","_"));
         mContainOperand = true;
-        operation = null;
-
-
+         mOperation = null;
     }
 
-    private Double calculate() {
-        switch (operation) {
+    private Double calculate(Double operand_1, Double operand_2) {
+        switch (mOperation) {
             case PLUS:
                 return operand_1 + operand_2;
             case MINUS:
@@ -155,11 +181,24 @@ public class Calculation {
     }
 
     private boolean checkSecondOperation() {
-        return mBuffer.toString().contains("+") ||
-                mBuffer.toString().contains("-") ||
-                mBuffer.toString().contains("*") ||
-                mBuffer.toString().contains("/");
+        String operation = "";
+         if (mBuffer.toString().contains("+"))
+             operation = "+";
+         if (mBuffer.toString().contains("-"))
+             operation = "-";
+        if (mBuffer.toString().contains("*"))
+            operation = "*";
+        if (mBuffer.toString().contains("/"))
+            operation = "/";
+        return !mBuffer.toString().endsWith(operation);
+    }
 
+    private static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 
 
