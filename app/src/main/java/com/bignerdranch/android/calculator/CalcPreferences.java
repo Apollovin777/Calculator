@@ -1,31 +1,71 @@
 package com.bignerdranch.android.calculator;
 
-import android.content.Context;
-import android.preference.PreferenceManager;
-
 import com.bignerdranch.android.calculator.Calculation;
-import com.google.gson.Gson;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 public class CalcPreferences {
     private static final String PREF_CALC_OBJECT = "CALC_OBJECT";
 
-    public static Calculation getStoredCalc(Context context) {
+    private static final String BUFFER = "BUFFER";
+    private static final String OUTPUT = "OUTPUT";
+    private static final String CURRENT_OPERATION = "operation";
+    private static final String CONTAIN_OPERAND = "containOperand";
+    private static final String CLEAR = "clear";
 
-        Gson gson = new Gson();
-        String json = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(PREF_CALC_OBJECT, "");
-        Calculation obj = gson.fromJson(json, Calculation.class);
 
+    enum Season { WINTER, SPRING, SUMMER, AUTUMN }
 
-        return obj;
+    public static Calculation getStoredCalc(Context context,Calculation.CalculateListener listener) {
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        Calculation calc = new Calculation(listener);
+
+        String operation = pref.getString(CURRENT_OPERATION,null);
+        if (operation != null) {
+            calc.setOperation(Calculation.OPERATION.valueOf(operation));
+        } else{
+            calc.setOperation(null);
+        }
+
+        String buffer = pref.getString(BUFFER,null);
+        if (buffer != null) {
+            calc.setBuffer(new StringBuffer(buffer));
+        }else{
+            calc.setBuffer(new StringBuffer());
+        }
+
+        String output = pref.getString(OUTPUT,null);
+        if (output != null) {
+            calc.setOutput(new StringBuffer(output));
+        } else {
+            calc.setOutput(new StringBuffer());
+        }
+
+        boolean containOperand = pref.getBoolean(CONTAIN_OPERAND,false);
+        calc.setContainOperand(containOperand);
+
+        boolean clear = pref.getBoolean(CLEAR,false);
+        calc.setClear(clear);
+
+        return calc;
     }
     public static void setStoredCalc(Context context, Calculation object) {
 
-        Gson gson = new Gson();
-        String json = gson.toJson(object);
+        String operation = null;
+                if (object.getOperation() != null){
+                    operation = object.getOperation().toString();
+                }
+
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
-                .putString(PREF_CALC_OBJECT, json)
+                .putString(BUFFER, object.getBuffer().toString())
+                .putString(OUTPUT, object.getOutput().toString())
+                .putString(CURRENT_OPERATION, operation)
+                .putBoolean(CONTAIN_OPERAND, object.isContainOperand())
+                .putBoolean(CLEAR, object.isClear())
                 .apply();
     }
 }
+

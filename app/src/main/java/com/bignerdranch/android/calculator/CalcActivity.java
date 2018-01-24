@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 public class CalcActivity extends AppCompatActivity implements View.OnClickListener,Calculation.CalculateListener {
     private static final String TAG = "TAGGG";
     private static final String KEY_INDEX = "INDEX";
@@ -46,6 +48,12 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
 
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        CalcPreferences.setStoredCalc(this,mCalc);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -54,7 +62,9 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         mTextView = findViewById(R.id.text_result);
         mTextView.setMovementMethod(new ScrollingMovementMethod() {});
 
-        mCalc = new Calculation(this);
+        mCalc = CalcPreferences.getStoredCalc(this,this);
+        mTextView.setText(mCalc.getOutput().toString());
+        mTextView.append(mCalc.getBuffer().toString());
 
         mButton0 = findViewById(R.id.button_0);
         mButton0.setOnClickListener(this);
@@ -114,13 +124,10 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         mButtonBack.setOnClickListener(this);
         Typeface font = Typeface.createFromAsset(getAssets(), "Quivira.otf");
         mButtonBack.setTypeface(font);
-
-
     }
 
     @Override
     public void onClick(View v) {
-        String temp;
         switch (v.getId()) {
             case R.id.button_0:
                 mCalc.addData("0");
@@ -186,7 +193,6 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     public void updateView(String value) {
 
         String text = value.replace("_", "-");
-
         if (mTextView != null) {
             mTextView.setText(text);
             final Layout layout = mTextView.getLayout();

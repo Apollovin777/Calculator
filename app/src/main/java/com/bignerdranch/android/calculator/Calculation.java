@@ -17,10 +17,12 @@ public class Calculation  {
     private StringBuffer mBuffer;
     @SerializedName("output")
     private StringBuffer mOutput;
-    @SerializedName("listener")
-    private CalculateListener mListener;
     @SerializedName("containOperand")
     private boolean mContainOperand;
+    @SerializedName("clear")
+    private boolean mClear;
+
+    private CalculateListener mListener;
 
     public OPERATION getOperation() {
         return mOperation;
@@ -70,15 +72,13 @@ public class Calculation  {
         mClear = clear;
     }
 
-    @SerializedName("clear")
-    private boolean mClear;
-
 
     public Calculation(CalculateListener listener) {
         mBuffer = new StringBuffer();
         mOutput = new StringBuffer();
         this.mListener = listener;
         mClear = false;
+        mContainOperand = false;
     }
 
     public interface CalculateListener {
