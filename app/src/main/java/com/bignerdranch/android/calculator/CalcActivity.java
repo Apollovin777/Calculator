@@ -17,8 +17,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class CalcActivity extends AppCompatActivity implements View.OnClickListener,Calculation.CalculateListener{
-    private static String TAG = "CalcActivity";
+public class CalcActivity extends AppCompatActivity implements View.OnClickListener,Calculation.CalculateListener {
+    private static final String TAG = "TAGGG";
+    private static final String KEY_INDEX = "INDEX";
     private Calculation mCalc;
     private String operand = "";
     private TextView mTextView;
@@ -47,12 +48,13 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.i(TAG,"onCreate");
         setContentView(R.layout.activity_calc);
         mTextView = findViewById(R.id.text_result);
-        mTextView.setMovementMethod(new ScrollingMovementMethod(){
+        mTextView.setMovementMethod(new ScrollingMovementMethod() {});
 
-        });
-
+        mCalc = new Calculation(this);
 
         mButton0 = findViewById(R.id.button_0);
         mButton0.setOnClickListener(this);
@@ -113,13 +115,13 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         Typeface font = Typeface.createFromAsset(getAssets(), "Quivira.otf");
         mButtonBack.setTypeface(font);
 
-        mCalc = new Calculation(this);
+
     }
 
     @Override
     public void onClick(View v) {
         String temp;
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.button_0:
                 mCalc.addData("0");
                 break;
@@ -183,22 +185,18 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void updateView(String value) {
 
-        String text = value.replace("_","-");
+        String text = value.replace("_", "-");
 
-        if(mTextView != null){
+        if (mTextView != null) {
             mTextView.setText(text);
             final Layout layout = mTextView.getLayout();
-            if(layout != null){
+            if (layout != null) {
                 int scrollDelta = layout.getLineBottom(mTextView.getLineCount() - 1)
                         - mTextView.getScrollY() - mTextView.getHeight();
-                if(scrollDelta > 0)
+                if (scrollDelta > 0)
                     mTextView.scrollBy(0, scrollDelta);
             }
         }
     }
 
-    private void appendTextAndScroll(String text)
-    {
-
-    }
 }

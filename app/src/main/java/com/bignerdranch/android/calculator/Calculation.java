@@ -3,16 +3,74 @@ package com.bignerdranch.android.calculator;
 import android.location.Location;
 import android.util.Log;
 
-public class Calculation {
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+import java.nio.Buffer;
+
+public class Calculation  {
     private static final String TAG = "Calculation";
 
+    @SerializedName("operation")
     private OPERATION mOperation;
+    @SerializedName("buffer")
     private StringBuffer mBuffer;
+    @SerializedName("output")
     private StringBuffer mOutput;
-    private Double operand_1;
-    private Double operand_2;
+    @SerializedName("listener")
     private CalculateListener mListener;
+    @SerializedName("containOperand")
     private boolean mContainOperand;
+
+    public OPERATION getOperation() {
+        return mOperation;
+    }
+
+    public void setOperation(OPERATION operation) {
+        mOperation = operation;
+    }
+
+    public StringBuffer getBuffer() {
+        return mBuffer;
+    }
+
+    public void setBuffer(StringBuffer buffer) {
+        mBuffer = buffer;
+    }
+
+    public StringBuffer getOutput() {
+        return mOutput;
+    }
+
+    public void setOutput(StringBuffer output) {
+        mOutput = output;
+    }
+
+    public CalculateListener getListener() {
+        return mListener;
+    }
+
+    public void setListener(CalculateListener listener) {
+        mListener = listener;
+    }
+
+    public boolean isContainOperand() {
+        return mContainOperand;
+    }
+
+    public void setContainOperand(boolean containOperand) {
+        mContainOperand = containOperand;
+    }
+
+    public boolean isClear() {
+        return mClear;
+    }
+
+    public void setClear(boolean clear) {
+        mClear = clear;
+    }
+
+    @SerializedName("clear")
     private boolean mClear;
 
 
@@ -30,30 +88,106 @@ public class Calculation {
     public enum OPERATION {
         PLUS, MINUS, MULTIPLY, DIVIDE
     }
+    private boolean alreadyContainOperation() {
+        String operation = "test";
+        boolean result = false;
+        if (mBuffer.toString().contains("+")) {
+            operation = "+";
+            result = true;
+        }
 
+        if (mBuffer.toString().contains("-")) {
+            operation = "-";
+            result = true;
+         }
+        if (mBuffer.toString().contains("*")) {
+            operation = "*";
+            result = true;
+         }
+        if (mBuffer.toString().contains("/")){
+            operation = "/";
+            result = true;
+        }
+        if (result) {
+            return !isOperationLastChar(operation);
+        }else {
+            return false;
+        }
+
+
+    }
+
+    private boolean isOperationLastChar(String value) {
+        if (mBuffer.toString().endsWith(value)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isOperationLastChar() {
+        String lastChar = mBuffer.substring(mBuffer.length()-1);
+        if (lastChar.matches("[+\\-*\\/]")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public void addData(String s) {
-        if (mContainOperand && s.matches("[0-9.]")&& !checkSecondOperation()) {
+        if (mContainOperand && s.matches("[0-9.]") && !isOperationLastChar()) {
             mBuffer = new StringBuffer();
-            mContainOperand = false;
-        } else {
-            mContainOperand = false;
         }
+
+        mContainOperand = false;
+
         switch (s) {
             case "+":
-                performOperations("+");
+                if (alreadyContainOperation()) {
+                    returnResult();
+                }
+                if (mOperation == null) {
+                    mBuffer.append(s);
+                } else{
+                    mBuffer.replace(mBuffer.length()-1,mBuffer.length(),s);
+                }
+                sendOutput(mBuffer.toString());
                 mOperation = OPERATION.PLUS;
                 break;
             case "-":
-                performOperations("-");
+                if (alreadyContainOperation()) {
+                    returnResult();
+                }
+                if (mOperation == null) {
+                    mBuffer.append(s);
+                } else{
+                    mBuffer.replace(mBuffer.length()-1,mBuffer.length(),s);
+                }
+                sendOutput(mBuffer.toString());
                 mOperation = OPERATION.MINUS;
                 break;
             case "*":
-                performOperations("*");
+                if (alreadyContainOperation()) {
+                    returnResult();
+                }
+                if (mOperation == null) {
+                    mBuffer.append(s);
+                } else{
+                    mBuffer.replace(mBuffer.length()-1,mBuffer.length(),s);
+                }
+                sendOutput(mBuffer.toString());
                 mOperation = OPERATION.MULTIPLY;
                 break;
             case "/":
-                performOperations("/");
+                if (alreadyContainOperation()) {
+                    returnResult();
+                }
+                if (mOperation == null) {
+                    mBuffer.append(s);
+                } else{
+                    mBuffer.replace(mBuffer.length()-1,mBuffer.length(),s);
+                }
+                sendOutput(mBuffer.toString());
                 mOperation = OPERATION.DIVIDE;
                 break;
             case "_":
@@ -99,7 +233,7 @@ public class Calculation {
 
     }
     private void performOperations(String s){
-        if (checkSecondOperation()) {
+        if (alreadyContainOperation()) {
             returnResult();
         }
         if (mOperation == null) {
@@ -167,31 +301,25 @@ public class Calculation {
     }
 
     private Double calculate(Double operand_1, Double operand_2) {
+        Double result = null;
         switch (mOperation) {
             case PLUS:
-                return operand_1 + operand_2;
+                result = operand_1 + operand_2;
+                break;
             case MINUS:
-                return operand_1 - operand_2;
+                result = operand_1 - operand_2;
+                break;
             case MULTIPLY:
-                return operand_1 * operand_2;
+                result = operand_1 * operand_2;
+                break;
             case DIVIDE:
-                return operand_1 / operand_2;
+                result = operand_1 / operand_2;
+                break;
         }
-        return null;
+        return result;
     }
 
-    private boolean checkSecondOperation() {
-        String operation = "";
-         if (mBuffer.toString().contains("+"))
-             operation = "+";
-         if (mBuffer.toString().contains("-"))
-             operation = "-";
-        if (mBuffer.toString().contains("*"))
-            operation = "*";
-        if (mBuffer.toString().contains("/"))
-            operation = "/";
-        return !mBuffer.toString().endsWith(operation);
-    }
+
 
     private static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
