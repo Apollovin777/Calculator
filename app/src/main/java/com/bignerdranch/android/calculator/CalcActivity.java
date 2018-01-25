@@ -47,11 +47,7 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     private String mText;
 
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        CalcPreferences.setStoredCalc(this,mCalc);
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +58,7 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         mTextView = findViewById(R.id.text_result);
         mTextView.setMovementMethod(new ScrollingMovementMethod() {});
 
-        mCalc = CalcPreferences.getStoredCalc(this,this);
-        mTextView.setText(mCalc.getOutput().toString());
-        mTextView.append(mCalc.getBuffer().toString());
+        mCalc = new Calculation(this);
 
         mButton0 = findViewById(R.id.button_0);
         mButton0.setOnClickListener(this);

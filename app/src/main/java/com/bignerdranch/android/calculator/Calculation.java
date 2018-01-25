@@ -11,66 +11,13 @@ import java.nio.Buffer;
 public class Calculation  {
     private static final String TAG = "Calculation";
 
-    @SerializedName("operation")
+
     private OPERATION mOperation;
-    @SerializedName("buffer")
     private StringBuffer mBuffer;
-    @SerializedName("output")
     private StringBuffer mOutput;
-    @SerializedName("containOperand")
     private boolean mContainOperand;
-    @SerializedName("clear")
     private boolean mClear;
-
     private CalculateListener mListener;
-
-    public OPERATION getOperation() {
-        return mOperation;
-    }
-
-    public void setOperation(OPERATION operation) {
-        mOperation = operation;
-    }
-
-    public StringBuffer getBuffer() {
-        return mBuffer;
-    }
-
-    public void setBuffer(StringBuffer buffer) {
-        mBuffer = buffer;
-    }
-
-    public StringBuffer getOutput() {
-        return mOutput;
-    }
-
-    public void setOutput(StringBuffer output) {
-        mOutput = output;
-    }
-
-    public CalculateListener getListener() {
-        return mListener;
-    }
-
-    public void setListener(CalculateListener listener) {
-        mListener = listener;
-    }
-
-    public boolean isContainOperand() {
-        return mContainOperand;
-    }
-
-    public void setContainOperand(boolean containOperand) {
-        mContainOperand = containOperand;
-    }
-
-    public boolean isClear() {
-        return mClear;
-    }
-
-    public void setClear(boolean clear) {
-        mClear = clear;
-    }
 
 
     public Calculation(CalculateListener listener) {
@@ -232,18 +179,6 @@ public class Calculation  {
         }
 
     }
-    private void performOperations(String s){
-        if (alreadyContainOperation()) {
-            returnResult();
-        }
-        if (mOperation == null) {
-            mBuffer.append(s);
-        } else{
-            mBuffer.replace(mBuffer.length()-1,mBuffer.length(),s);
-        }
-        sendOutput(mBuffer.toString());
-    }
-
     private void sendOutput(String val){
         mListener.updateView(mOutput.toString() + val);
     }
@@ -318,8 +253,6 @@ public class Calculation  {
         }
         return result;
     }
-
-
 
     private static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();

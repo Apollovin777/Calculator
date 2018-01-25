@@ -19,53 +19,53 @@ public class CalcPreferences {
 
     public static Calculation getStoredCalc(Context context,Calculation.CalculateListener listener) {
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        Calculation calc = new Calculation(listener);
+//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+//        Calculation calc = new Calculation(listener);
+//
+//        String operation = pref.getString(CURRENT_OPERATION,null);
+//        if (operation != null) {
+//            calc.setOperation(Calculation.OPERATION.valueOf(operation));
+//        } else{
+//            calc.setOperation(null);
+//        }
+//
+//        String buffer = pref.getString(BUFFER,null);
+//        if (buffer != null) {
+//            calc.setBuffer(new StringBuffer(buffer));
+//        }else{
+//            calc.setBuffer(new StringBuffer());
+//        }
+//
+//        String output = pref.getString(OUTPUT,null);
+//        if (output != null) {
+//            calc.setOutput(new StringBuffer(output));
+//        } else {
+//            calc.setOutput(new StringBuffer());
+//        }
+//
+//        boolean containOperand = pref.getBoolean(CONTAIN_OPERAND,false);
+//        calc.setContainOperand(containOperand);
+//
+//        boolean clear = pref.getBoolean(CLEAR,false);
+//        calc.setClear(clear);
 
-        String operation = pref.getString(CURRENT_OPERATION,null);
-        if (operation != null) {
-            calc.setOperation(Calculation.OPERATION.valueOf(operation));
-        } else{
-            calc.setOperation(null);
-        }
-
-        String buffer = pref.getString(BUFFER,null);
-        if (buffer != null) {
-            calc.setBuffer(new StringBuffer(buffer));
-        }else{
-            calc.setBuffer(new StringBuffer());
-        }
-
-        String output = pref.getString(OUTPUT,null);
-        if (output != null) {
-            calc.setOutput(new StringBuffer(output));
-        } else {
-            calc.setOutput(new StringBuffer());
-        }
-
-        boolean containOperand = pref.getBoolean(CONTAIN_OPERAND,false);
-        calc.setContainOperand(containOperand);
-
-        boolean clear = pref.getBoolean(CLEAR,false);
-        calc.setClear(clear);
-
-        return calc;
+        return null;
     }
     public static void setStoredCalc(Context context, Calculation object) {
 
-        String operation = null;
-                if (object.getOperation() != null){
-                    operation = object.getOperation().toString();
-                }
-
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putString(BUFFER, object.getBuffer().toString())
-                .putString(OUTPUT, object.getOutput().toString())
-                .putString(CURRENT_OPERATION, operation)
-                .putBoolean(CONTAIN_OPERAND, object.isContainOperand())
-                .putBoolean(CLEAR, object.isClear())
-                .apply();
+//        String operation = null;
+//                if (object.getOperation() != null){
+//                    operation = object.getOperation().toString();
+//                }
+//
+//        PreferenceManager.getDefaultSharedPreferences(context)
+//                .edit()
+//                .putString(BUFFER, object.getBuffer().toString())
+//                .putString(OUTPUT, object.getOutput().toString())
+//                .putString(CURRENT_OPERATION, operation)
+//                .putBoolean(CONTAIN_OPERAND, object.isContainOperand())
+//                .putBoolean(CLEAR, object.isClear())
+//                .apply();
     }
 }
 
