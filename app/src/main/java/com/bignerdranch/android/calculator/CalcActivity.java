@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -24,7 +25,9 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     private static final String KEY_INDEX = "INDEX";
     private Calculation mCalc;
     private String operand = "";
-    private TextView mTextView;
+    private TextView mTextTemp;
+    private TextView mTextCurrent;
+    private TextView mTextPrev;
     private Button mButton1;
     private Button mButton2;
     private Button mButton3;
@@ -53,10 +56,14 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         Log.i(TAG,"onCreate");
         setContentView(R.layout.activity_calc);
-        mTextView = findViewById(R.id.text_result);
-        mTextView.setMovementMethod(new ScrollingMovementMethod() {});
+        mTextTemp = findViewById(R.id.text_temp);
+        mTextCurrent = findViewById(R.id.text_current);
+        mTextPrev = findViewById(R.id.text_prev);
+        mTextPrev.setMovementMethod(new ScrollingMovementMethod() {});
 
         mCalc = new Calculation(this);
 
@@ -184,17 +191,29 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void updateView(String value) {
+    public void updateView(String temp,String current, String prev) {
 
-        String text = value.replace("_", "-");
-        if (mTextView != null) {
-            mTextView.setText(text);
-            final Layout layout = mTextView.getLayout();
+        String current_text = current.replace("_", "-");
+        if (current_text=="")
+            current_text = "0";
+        if (mTextCurrent != null) {
+            mTextCurrent.setText(current_text);
+        }
+
+        String temp_text = temp.replace("_","-");
+        if (mTextTemp != null) {
+            mTextTemp.setText(temp_text);
+        }
+
+
+        if (mTextPrev != null){
+
+            final Layout layout = mTextPrev.getLayout();
             if (layout != null) {
-                int scrollDelta = layout.getLineBottom(mTextView.getLineCount() - 1)
-                        - mTextView.getScrollY() - mTextView.getHeight();
+                int scrollDelta = layout.getLineBottom(mTextPrev.getLineCount() - 1)
+                        - mTextPrev.getScrollY() - mTextPrev.getHeight();
                 if (scrollDelta > 0)
-                    mTextView.scrollBy(0, scrollDelta);
+                    mTextPrev.scrollBy(0, scrollDelta);
             }
         }
     }
