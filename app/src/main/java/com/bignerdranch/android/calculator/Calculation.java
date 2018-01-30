@@ -71,9 +71,9 @@ public class Calculation {
     }
 
     private void addToHistory(String value){
-        mHistory.append(value + "\n");
+        mHistory.append("\n" + value);
         if (isAfterResult){
-            mHistory.append("--------------------------" + "\n");
+            mHistory.append("\n"+ "--------------------------");
         }
     }
 
@@ -125,7 +125,11 @@ public class Calculation {
 
     private String getTempResultText(String value) {
 
-        if (value == "=") {
+        if (isAfterResult) {
+            return "";
+        }
+
+        if (value == "c"){
             return "";
         }
 

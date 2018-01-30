@@ -64,6 +64,7 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
 
         mTextTemp = findViewById(R.id.text_temp);
         mTextCurrent = findViewById(R.id.text_current);
+
         mTextPrev = findViewById(R.id.text_prev);
         mTextPrev.setMovementMethod(new ScrollingMovementMethod() {});
 
@@ -223,15 +224,15 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         mTextPrev.setText(prev);
-//        if (mTextPrev != null){
-//            final Layout layout = mTextPrev.getLayout();
-//            if (layout != null) {
-//                int scrollDelta = layout.getLineBottom(mTextPrev.getLineCount() - 1)
-//                        - mTextPrev.getScrollY() - mTextPrev.getHeight();
-//                if (scrollDelta > 0)
-//                    mTextPrev.scrollBy(0, scrollDelta);
-//            }
-//        }
+        if (mTextPrev != null){
+            final Layout layout = mTextPrev.getLayout();
+            if (layout != null) {
+                int scrollDelta = layout.getLineBottom(mTextPrev.getLineCount() - 1)
+                        - mTextPrev.getScrollY() - mTextPrev.getHeight();
+                if (scrollDelta > 0)
+                    mTextPrev.scrollBy(0, scrollDelta);
+            }
+        }
     }
 
 }
