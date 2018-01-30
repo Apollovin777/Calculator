@@ -24,7 +24,7 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "TAGGG";
     private static final String KEY_INDEX = "INDEX";
     private Calculation mCalc;
-    private String operand = "";
+    private boolean mTotalClear ;
     private TextView mTextTemp;
     private TextView mTextCurrent;
     private TextView mTextPrev;
@@ -60,6 +60,8 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
 
         Log.i(TAG,"onCreate");
         setContentView(R.layout.activity_calc);
+        mTotalClear = false;
+
         mTextTemp = findViewById(R.id.text_temp);
         mTextCurrent = findViewById(R.id.text_current);
         mTextPrev = findViewById(R.id.text_prev);
@@ -113,6 +115,11 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         mButtonEqual.setOnClickListener(this);
 
         mButtonClear = findViewById(R.id.button_clear);
+        if (mTotalClear){
+            mButtonClear.setText("AC");
+        }else{
+            mButtonClear.setText("C");
+        }
         mButtonClear.setOnClickListener(this);
 
         mButtonSign = findViewById(R.id.button_sign);
@@ -129,6 +136,14 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+
+        if (v.getId()==R.id.button_clear && mTotalClear){
+            mCalc = new Calculation(this);
+            mButtonClear.setText("C");
+        }
+        mButtonClear.setText("C");
+        mTotalClear = false;
+
         switch (v.getId()) {
             case R.id.button_0:
                 mCalc.addData("0");
@@ -186,6 +201,8 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button_clear:
                 mCalc.addData("c");
+                mTotalClear = true;
+                mButtonClear.setText("AC");
                 break;
         }
     }
@@ -205,17 +222,16 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
             mTextTemp.setText(temp_text);
         }
 
-
-        if (mTextPrev != null){
-
-            final Layout layout = mTextPrev.getLayout();
-            if (layout != null) {
-                int scrollDelta = layout.getLineBottom(mTextPrev.getLineCount() - 1)
-                        - mTextPrev.getScrollY() - mTextPrev.getHeight();
-                if (scrollDelta > 0)
-                    mTextPrev.scrollBy(0, scrollDelta);
-            }
-        }
+        mTextPrev.setText(prev);
+//        if (mTextPrev != null){
+//            final Layout layout = mTextPrev.getLayout();
+//            if (layout != null) {
+//                int scrollDelta = layout.getLineBottom(mTextPrev.getLineCount() - 1)
+//                        - mTextPrev.getScrollY() - mTextPrev.getHeight();
+//                if (scrollDelta > 0)
+//                    mTextPrev.scrollBy(0, scrollDelta);
+//            }
+//        }
     }
 
 }

@@ -14,32 +14,39 @@
         android:gravity="bottom"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/text_prev"
+        <RelativeLayout
+            android:id="@+id/relative_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:gravity="bottom|right"
-            android:textSize="14sp"
-            tools:text="0" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/text_current"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:gravity="bottom|right"
-            android:text="0"
-            android:textSize="36sp" />
+            <TextView
+                android:id="@+id/text_prev"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/text_current"
+                android:gravity="bottom|right"
+                android:textSize="24sp"
+                tools:text="0" />
 
-        <TextView
-            android:id="@+id/text_temp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:gravity="bottom|right"
-            android:textSize="14sp"
-            tools:text="0" />
+            <TextView
+                android:id="@+id/text_current"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/text_temp"
+                android:gravity="bottom|right"
+                android:text="0"
+                android:textSize="36sp"
+                tools:text="1" />
+
+            <TextView
+                android:id="@+id/text_temp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="bottom|right"
+                android:textSize="24sp"
+                tools:text="2" />
+        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
